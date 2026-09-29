@@ -1,0 +1,260 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+purchaseOrderManagement
+</name>
+</assembly>
+<members>
+<member name="T:purchaseOrderManagement.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:purchaseOrderManagement.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:purchaseOrderManagement.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="T:purchaseOrderManagement.clsExcelHelper">
+ All Excel Interop work lives here: importing supplier/item lists
+ from a workbook, and exporting a single purchase order to one.
+</member>
+<member name="M:purchaseOrderManagement.clsExcelHelper.ImportSuppliers(System.String)">
+ Reads a sheet with columns Name | Phone | Email (row 1 = header)
+ and returns the rows as a DataTable matching the Suppliers grid.
+</member>
+<member name="M:purchaseOrderManagement.clsExcelHelper.ImportItems(System.String)">
+ Reads a sheet with columns Code | Description | UOM | Rate (row 1 = header)
+ and returns the rows as a DataTable matching the Items grid.
+</member>
+<member name="M:purchaseOrderManagement.clsExcelHelper.ExportPO(System.String,System.DateTime,System.String,System.DateTime,System.Decimal,System.Decimal,System.Data.DataTable,System.String)">
+ Writes one purchase order (header + line items) to a new Excel file at savePath.
+</member>
+<member name="M:purchaseOrderManagement.clsExcelHelper.GetSheetByName(Microsoft.Office.Interop.Excel.Workbook,System.String)">
+ <summary>Finds a worksheet by its tab name (e.g. "Suppliers" or "Items"). Returns Nothing if not found.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsExcelHelper.ReleaseObject(System.Object)">
+ Releases a COM object so Excel doesn't stay running in the background after we're done.
+</member>
+<member name="M:purchaseOrderManagement.clsItems.GetAllItems">
+ <summary>Loads every item from the database into a DataTable.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsItems.InsertItem(System.String,System.String,System.String,System.Decimal)">
+ <summary>Inserts a new item and returns its new ItemID.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsItems.UpdateItem(System.Int32,System.String,System.String,System.String,System.Decimal)">
+ <summary>Updates an existing item by ItemID.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsItems.DeleteItem(System.Int32)">
+ <summary>Deletes an item by ItemID.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsItems.SaveAll(System.Data.DataTable)">
+ <summary>Insert new / update existing rows from the working grid (same pattern as clsSuppliers.SaveAll).</summary>
+</member>
+<member name="T:purchaseOrderManagement.clsPurchaseOrders">
+ Handles all database work for Purchase Orders (header + line items).
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.GetNextPONumber">
+Generates the next PO number in the format PO-YYYY-NNNN.
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.GetAllPOs">
+ <summary>Summary list for dgvPurchaseOrder: PO Number, Date, Supplier, Delivery, Total.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.GetPOHeader(System.Int32)">
+ <summary>Full header row for a single PO - used when editing/exporting.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.GetPODetails(System.Int32)">
+ <summary>Line items for a single PO - used when editing/exporting.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.SaveNewPO(System.String,System.DateTime,System.Int32,System.DateTime,System.Decimal,System.Decimal,System.Data.DataTable)">
+ <summary>
+ Saves a brand-new Purchase Order (header + all its line items) in one transaction.
+ detailsTable columns expected: ItemID, UOM, Qty, Rate, Amount
+ </summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.UpdatePO(System.Int32,System.String,System.DateTime,System.Int32,System.DateTime,System.Decimal,System.Decimal,System.Data.DataTable)">
+ <summary>
+ Updates an existing Purchase Order's header AND replaces all of its line items.
+ Used by the Edit flow: old details are deleted, then the current grid is re-inserted.
+ </summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.UpdatePOHeaderDates(System.Int32,System.DateTime,System.DateTime)">
+ <summary>Updates just the two date fields - used by the inline "Save" button on the PO list screen.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.DeletePO(System.Int32)">
+ <summary>Deletes a PO header - its line items go too, because of ON DELETE CASCADE.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsPurchaseOrders.GetReportData(System.DateTime,System.DateTime,System.Int32)">
+ <summary>
+ Report data between two dates, optionally filtered by supplier.
+ supplierID = 0 means "all suppliers". No address column, as requested.
+ </summary>
+</member>
+<member name="T:purchaseOrderManagement.clsReportHelper">
+ <summary>
+ Builds the PO report and saves it as a PDF.
+ Reuses Excel Interop - Excel can export any worksheet straight to PDF,
+ so we don't need a separate PDF library.
+ </summary>
+</member>
+<member name="T:purchaseOrderManagement.clsSuppliers">
+ Handles all database work for Suppliers.
+ ucSuppliers never talks to SQL directly - it calls these methods.
+</member>
+<member name="M:purchaseOrderManagement.clsSuppliers.GetAllSuppliers">
+ Loads every supplier from the database into a DataTable.
+</member>
+<member name="M:purchaseOrderManagement.clsSuppliers.InsertSupplier(System.String,System.String,System.String)">
+ <summary>Inserts a new supplier and returns its new SupplierID.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsSuppliers.UpdateSupplier(System.Int32,System.String,System.String,System.String)">
+ <summary>Updates an existing supplier by SupplierID.</summary>
+</member>
+<member name="M:purchaseOrderManagement.clsSuppliers.DeleteSupplier(System.Int32)">
+ Deletes a supplier by SupplierID.
+</member>
+<member name="M:purchaseOrderManagement.clsSuppliers.SaveAll(System.Data.DataTable)">
+ <summary>
+ Saves the whole working grid to the database in one go.
+ Rows with SupplierID = 0 are new -> Insert.
+ Rows with SupplierID > 0 are existing -> Update.
+ Called when the user clicks "Save".
+ </summary>
+</member>
+<member name="T:purchaseOrderManagement.modDBConnection">
+ Central place for the database connection string.
+ Every class module asks this module for a connection
+ instead of building its own connection string.
+</member>
+<member name="M:purchaseOrderManagement.modDBConnection.GetConnection">
+ Returns a fresh, unopened SqlConnection.
+ Callers are responsible for opening/closing it (so i used a Using blocks at callers).
+</member>
+<member name="T:purchaseOrderManagement.modStatus">
+ Lets any screen (UserControl) write a message to frmMain's status label
+ without needing a direct reference to frmMain.
+ frmMain sets StatusLabel once, in its Load event:
+     modStatus.StatusLabel = lblStatus
+</member>
+<member name="M:purchaseOrderManagement.modStatus.SetStatus(System.String)">
+ Writes a message to the main form's status bar, if one has been set.
+</member>
+<member name="M:purchaseOrderManagement.ucItems.LoadUOMList">
+ <summary>Fills the UOM dropdown with the fixed list of units.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucItems.btnDeleteItems_Click(System.Object,System.EventArgs)">
+ <summary>Deletes the selected item immediately - from the DB (if it has an ID) and from the grid.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucItems.btnSaveToItemDB_Click(System.Object,System.EventArgs)">
+ <summary>Pushes every row currently in the grid into the database (insert new, update existing).</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.SetupLineItemsTable">
+ <summary>Defines the columns of the in-memory grid that becomes the PO's line items.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.LoadSuppliers">
+ <summary>Fills the Supplier combo with Name (display) / SupplierID (value).</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.LoadItems">
+ <summary>Fills the Item combo with ItemCode (display) / ItemID (value).</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.LoadForEdit(System.Int32)">
+ <summary>
+ Called by ucPurchaseOrders BEFORE this control is shown, to pre-fill it
+ with an existing PO's data so the user can edit and re-save it.
+ </summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.ApplyPendingSupplierIfAny">
+ <summary>Applies the supplier remembered by LoadForEdit(), once the combo has data.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.cmbItemNewPo_SelectedIndexChanged(System.Object,System.EventArgs)">
+ <summary>When an item is picked, auto-fill its UOM and Rate (both read-only fields).</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.txtQtyNewPo_TextChanged(System.Object,System.EventArgs)">
+ <summary>Recalculates Amount = Qty x Rate whenever the quantity changes.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.txtTaxNewPo_TextChanged(System.Object,System.EventArgs)">
+ <summary>Automatically appends a "%" to the tax field as the user types a number.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.btnAddNewPo_Click(System.Object,System.EventArgs)">
+ <summary>Adds the current item line to the review grid.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.btnSaveNewPo_Click(System.Object,System.EventArgs)">
+ <summary>Saves the PO (header + all line items). Inserts if new, updates if editing.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.btnCancleNewPo_Click(System.Object,System.EventArgs)">
+ <summary>Clears everything and returns to the Purchase Orders list screen.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucNewPO.ReturnToPOList">
+ <summary>Switches back to a freshly-loaded Purchase Orders list (so it shows the latest data).</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.LoadGrid">
+ <summary>Reloads the PO summary grid from the database.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.RefreshGrid">
+ <summary>Re-reads the grid from the database - call this after coming back from New PO.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.btnAddNewPO_Click(System.Object,System.EventArgs)">
+ <summary>Opens a blank New PO screen. Uses your existing LoadScreen navigation.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.btnExportPO_Click(System.Object,System.EventArgs)">
+ <summary>Exports the selected purchase order to an Excel workbook.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.btnEditPo_Click(System.Object,System.EventArgs)">
+ <summary>Opens the selected PO in the New PO screen, pre-filled, for editing.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.btnDeletePo_Click(System.Object,System.EventArgs)">
+ <summary>Deletes the selected purchase order (and its line items) after confirmation.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucPurchaseOrders.btnSavePOToDB_Click(System.Object,System.EventArgs)">
+ <summary>
+ Saves any direct edits made in the grid (Date / Delivery Date) back to the database.
+ For full edits (items, supplier, tax) use the Edit button instead, which opens the New PO screen.
+ NOTE: make sure this button's Click event is wired ONLY to btnSavePOToDB - not also to
+ btnAddNewPO's handler, or clicking Save will open a blank New PO screen instead of saving.
+ </summary>
+</member>
+<member name="M:purchaseOrderManagement.ucReports.LoadSupplierFilter">
+ <summary>Fills the supplier filter combo with all suppliers plus an "All Suppliers" option.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucReports.btnReportPreview_Click(System.Object,System.EventArgs)">
+ <summary>Pulls the report data for the chosen date range/supplier into dgvReport.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucReports.btnPrintReport_Click(System.Object,System.EventArgs)">
+ <summary>Lets the user choose where to save, then exports the last preview as a PDF.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.ucSuppliers_Load(System.Object,System.EventArgs)">
+Runs when the control first loads - pulls existing suppliers from the DB into the grid.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.LoadGrid">
+ Refreshes the DataGridView from the database.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnAddSuppliers_Click(System.Object,System.EventArgs)">
+ Adds a new row to the grid only - not saved to the DB until "Save" is clicked.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnUpdateSuppliers_Click(System.Object,System.EventArgs)">
+ Updates the row currently selected in the grid with the values in the text boxes.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnDeleteSuppliers_Click(System.Object,System.EventArgs)">
+ Deletes the selected supplier immediately - from the DB (if it has an ID) and from the grid.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnClearSuppliers_Click(System.Object,System.EventArgs)">
+ Clears the input fields only - does not touch the grid.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.DataGridView1_SelectionChanged(System.Object,System.EventArgs)">
+ When a grid row is clicked, load its values into the text boxes for editing.
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnImportExcel_Click(System.Object,System.EventArgs)">
+ <summary>Lets the user pick an Excel file and merges its rows into the grid.</summary>
+</member>
+<member name="M:purchaseOrderManagement.ucSuppliers.btnSaveToSuppliersDB_Click(System.Object,System.EventArgs)">
+ <summary>Pushes every row currently in the grid into the database (insert new, update existing).</summary>
+</member>
+</members>
+</doc>
